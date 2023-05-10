@@ -1,4 +1,5 @@
-const { selectTopics } = require("../models/topics.model");
+const { selectTopics,
+        fetchApi } = require("../models/topics.model");
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
@@ -7,3 +8,17 @@ exports.getTopics = (req, res, next) => {
       res.status(200).send({ topics: result.rows });
     })
 };
+
+/* exports.getEndpoints=(req,res)=>{
+  selectEndpoints().then((result)=>{
+    res.status(200).send(result)
+  })
+}
+ */
+exports.getApi = (req, res, next) => {
+  fetchApi().then((result) => {
+      res.status(200).send({ result });
+  })
+  .catch((err) => {
+      next(err);
+  })}
