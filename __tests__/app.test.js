@@ -36,14 +36,6 @@ beforeEach(() => {
           expect(response.body.msg).toBe('Not Found');
         });
     });
-/*     test('GET - status: 200 - respond with all the endpoints',()=>{
-      return request(app)
-      .get('/api')
-      .expect(200)
-      .then((response)=>{
-        expect(response.body.msg).toEqual()
-      })
-    }) */
 })
 
 describe('/api', () => {
@@ -52,12 +44,7 @@ describe('/api', () => {
       .get('/api')
       .expect(200)
       .then((response) => {
-      
         expect(response.body.result).toEqual(endpoints);
-        expect(typeof response.body.result).toBe('object');
-        expect(response.body.result).toHaveProperty('GET /api');
-        expect(response.body.result).toHaveProperty('GET /api/topics');
-        expect(response.body.result).toHaveProperty('GET /api/articles');
       });
     });      
 });

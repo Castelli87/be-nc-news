@@ -9,12 +9,7 @@ exports.getTopics = (req, res, next) => {
     })
 };
 
-/* exports.getEndpoints=(req,res)=>{
-  selectEndpoints().then((result)=>{
-    res.status(200).send(result)
-  })
-}
- */
+
 exports.getApi = (req, res, next) => {
   fetchApi().then((result) => {
       res.status(200).send({ result });
