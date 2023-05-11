@@ -89,6 +89,7 @@ describe("GET - /api/articles/invalidArticleId", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("not found");
+
       });
   });
 });
@@ -123,6 +124,44 @@ describe.only("/api/articles", () => {
         expect(res.body.articles).toBeSorted("created_at", {
           descending: true,
         });
+
+      });
+  });
+});
+
+describe("api/articles/:article_id/comments", () => {
+  test("GET - status: 200 - respond with an article object", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.commentsByArticleId.length === 11);
+        response.body.commentsByArticleId.forEach((comment) => {
+          expect(typeof comment).toBe("object");
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("article_id");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("votes");
+        });
+      });
+  });
+  test("400 - responds with error message when invalid path given", () => {
+    return request(app)
+      .get("/api/articles/nosense/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("404 - responds with error message when id not found", () => {
+    return request(app)
+      .get("/api/articles/1000000000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+
       });
   });
 });
