@@ -94,6 +94,15 @@ describe("GET - /api/articles/invalidArticleId", () => {
 });
 
 describe("api/articles/:article_id/comments", () => {
+  test("GET - status: 200 - respond with an article object sorted by the column created_at", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.commentsByArticleId.length).toBe(11);
+        expect(response.body.commentsByArticleId).toBeSortedBy("created_at",{ descending: true});
+      });
+  });
   test("GET - status: 200 - respond with an article object", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -102,6 +111,7 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.commentsByArticleId.length === 11);
         response.body.commentsByArticleId.forEach((comment) => {
           expect(typeof comment).toBe("object");
+          expect(comment.article_id).toBe(1);
           expect(comment).toHaveProperty("comment_id");
           expect(comment).toHaveProperty("article_id");
           expect(comment).toHaveProperty("author");
