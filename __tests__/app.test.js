@@ -112,6 +112,13 @@ describe.only("/api/articles", () => {
           expect(article).toHaveProperty("article_img_url");
           expect(article).toHaveProperty("comment_count");
         });
+      });
+  });
+  test("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
         expect(res.body.articles[0].comment_count).toBe(2);
         expect(res.body.articles).toBeSorted("created_at", {
           descending: true,

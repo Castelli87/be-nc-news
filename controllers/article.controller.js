@@ -13,7 +13,7 @@ exports.getArticleById= (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    //console.log('in the controller')
+
     selectArticles()
       .then((result) => {
   
