@@ -93,26 +93,29 @@ describe("GET - /api/articles/invalidArticleId", () => {
   });
 });
 
-
-describe('/api/articles', () => {
-  test('GET - status: 200 - get all the articles but body', () => {
+describe.only("/api/articles", () => {
+  test("GET - status: 200 - get all the articles but body", () => {
     return request(app)
-      .get('/api/articles')
+      .get("/api/articles")
       .expect(200)
       .then((res) => {
+        expect(res.body.articles.length).toBe(5);
         res.body.articles.forEach((article) => {
-          expect(typeof article).toBe('object');
-          expect(article).toHaveProperty('article_id');
-          expect(article).toHaveProperty('title');
-          expect(article).toHaveProperty('topic');
-          expect(article).toHaveProperty('author');
-          expect(article).not.toHaveProperty('body');
-          expect(article).toHaveProperty('created_at');
-          expect(article).toHaveProperty('votes');
-          expect(article).toHaveProperty('article_img_url');
-          expect(article).toHaveProperty('comment_count');
+          expect(typeof article).toBe("object");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).not.toHaveProperty("body");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
         });
-          expect(res.body.articles).toBeSorted('created_at', { descending: true })
-     });
-   });
+        expect(res.body.articles[0].comment_count).toBe(2);
+        expect(res.body.articles).toBeSorted("created_at", {
+          descending: true,
+        });
+      });
   });
+});

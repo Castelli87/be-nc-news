@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 
-app.use(express.json());
+
 
 const { getTopics, getApi} = require("./controllers/topics.controller");
 
