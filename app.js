@@ -6,7 +6,7 @@ app.use(express.json());
 
 const { getTopics, getApi} = require("./controllers/topics.controller");
 
-const {getArticleById}=require('./controllers/article.controller')
+const {getArticleById,getArticles}=require('./controllers/article.controller')
 
 
 
@@ -15,6 +15,10 @@ app.get("/api/topics", getTopics);
 app.get("/api", getApi);
 
 app.get("/api/articles/:article_id",getArticleById);
+
+
+app.get("/api/articles",getArticles)
+
 
 
 
