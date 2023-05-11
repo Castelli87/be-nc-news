@@ -8,6 +8,8 @@ const { getTopics, getApi} = require("./controllers/topics.controller");
 
 const {getArticleById}=require('./controllers/article.controller')
 
+const {getCommentsByArticleId}=require('./controllers/comments.controller')
+
 
 
 app.get("/api/topics", getTopics);
@@ -16,7 +18,7 @@ app.get("/api", getApi);
 
 app.get("/api/articles/:article_id",getArticleById);
 
-
+app.get("/api/articles/:article_id/comments",getCommentsByArticleId)
 
 
 
