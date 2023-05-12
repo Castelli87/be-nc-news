@@ -1,3 +1,4 @@
-\c nc_news_test;
+\c nc_news;
 
 
+SELECT * FROM comments;
