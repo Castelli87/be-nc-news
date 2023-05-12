@@ -93,6 +93,62 @@ describe("GET - /api/articles/invalidArticleId", () => {
   });
 });
 
+
+describe("api/articles/:article_id/comments", () => {
+  test("GET - status: 200 - respond with an article object sorted by the column created_at", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.commentsByArticleId.length).toBe(11);
+        expect(response.body.commentsByArticleId).toBeSortedBy("created_at",{ descending: true});
+      });
+  });
+  test("GET - status: 200 - respond with an article object", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.commentsByArticleId.length === 11);
+        response.body.commentsByArticleId.forEach((comment) => {
+          expect(typeof comment).toBe("object");
+          expect(comment.article_id).toBe(1);
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("article_id");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("votes");
+        });
+      });
+  });
+  test("400 - responds with error message when invalid path given", () => {
+    return request(app)
+      .get("/api/articles/nosense/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("404 - responds with error message when id not found", () => {
+    return request(app)
+      .get("/api/articles/1000000000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+  /// add this one 
+  test('GET - status: 200 - responds with an empty array ', () => {
+    return request(app)
+    .get("/api/articles/4/comments")
+    .expect(200)
+    .then((response)=>{
+      console.log('test',response.body)
+      expect(response.body.commentsByArticleId).toEqual([])
+    })
+  });
+
 describe.only("/api/articles", () => {
   test("GET - status: 200 - get all the articles but body", () => {
     return request(app)
@@ -125,4 +181,5 @@ describe.only("/api/articles", () => {
         });
       });
   });
+
 });
