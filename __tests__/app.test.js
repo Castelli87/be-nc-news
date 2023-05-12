@@ -93,7 +93,6 @@ describe("GET - /api/articles/invalidArticleId", () => {
   });
 });
 
-
 describe("api/articles/:article_id/comments", () => {
   test("GET - status: 200 - respond with an article object sorted by the column created_at", () => {
     return request(app)
@@ -101,7 +100,9 @@ describe("api/articles/:article_id/comments", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.commentsByArticleId.length).toBe(11);
-        expect(response.body.commentsByArticleId).toBeSortedBy("created_at",{ descending: true});
+        expect(response.body.commentsByArticleId).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
   test("GET - status: 200 - respond with an article object", () => {
@@ -138,48 +139,48 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("not found");
       });
   });
-  /// add this one 
-  test('GET - status: 200 - responds with an empty array ', () => {
+  /// add this one
+  test("GET - status: 200 - responds with an empty array ", () => {
     return request(app)
-    .get("/api/articles/4/comments")
-    .expect(200)
-    .then((response)=>{
-      console.log('test',response.body)
-      expect(response.body.commentsByArticleId).toEqual([])
-    })
-  });
-
-describe.only("/api/articles", () => {
-  test("GET - status: 200 - get all the articles but body", () => {
-    return request(app)
-      .get("/api/articles")
+      .get("/api/articles/4/comments")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles.length).toBe(5);
-        res.body.articles.forEach((article) => {
-          expect(typeof article).toBe("object");
-          expect(article).toHaveProperty("article_id");
-          expect(article).toHaveProperty("title");
-          expect(article).toHaveProperty("topic");
-          expect(article).toHaveProperty("author");
-          expect(article).not.toHaveProperty("body");
-          expect(article).toHaveProperty("created_at");
-          expect(article).toHaveProperty("votes");
-          expect(article).toHaveProperty("article_img_url");
-          expect(article).toHaveProperty("comment_count");
-        });
-      });
-  });
-  test("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles[0].comment_count).toBe(2);
-        expect(res.body.articles).toBeSorted("created_at", {
-          descending: true,
-        });
+      .then((response) => {
+        console.log("test", response.body);
+        expect(response.body.commentsByArticleId).toEqual([]);
       });
   });
 
+  describe.only("/api/articles", () => {
+    test("GET - status: 200 - get all the articles but body", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(5);
+          res.body.articles.forEach((article) => {
+            expect(typeof article).toBe("object");
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("author");
+            expect(article).not.toHaveProperty("body");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+            expect(article).toHaveProperty("article_img_url");
+            expect(article).toHaveProperty("comment_count");
+          });
+        });
+    });
+    test("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles[0].comment_count).toBe(2);
+          expect(res.body.articles).toBeSorted("created_at", {
+            descending: true,
+          });
+        });
+    });
+  });
 });
