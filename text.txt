@@ -1,5 +1,2 @@
-You are now connected to database "nc_news_test" as user "davide".
- comment_id | body | article_id | author | votes | created_at 
-------------+------+------------+--------+-------+------------
-(0 rows)
+
 
