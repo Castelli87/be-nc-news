@@ -137,4 +137,14 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("not found");
       });
   });
+  /// add this one 
+  test('GET - status: 200 - responds with an empty array ', () => {
+    return request(app)
+    .get("/api/articles/4/comments")
+    .expect(200)
+    .then((response)=>{
+      console.log('test',response.body)
+      expect(response.body.commentsByArticleId).toEqual([])
+    })
+  });
 });
