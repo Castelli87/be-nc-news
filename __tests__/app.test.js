@@ -145,12 +145,11 @@ describe("api/articles/:article_id/comments", () => {
       .get("/api/articles/4/comments")
       .expect(200)
       .then((response) => {
-        console.log("test", response.body);
         expect(response.body.commentsByArticleId).toEqual([]);
       });
   });
 
-  describe.only("/api/articles", () => {
+  describe("/api/articles", () => {
     test("GET - status: 200 - get all the articles but body", () => {
       return request(app)
         .get("/api/articles")
@@ -171,7 +170,7 @@ describe("api/articles/:article_id/comments", () => {
           });
         });
     });
-    test("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
+    test.only("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -182,5 +181,78 @@ describe("api/articles/:article_id/comments", () => {
           });
         });
     });
+  });
+});
+
+describe.only("/api/articles/:article_id/comments", () => {
+  test("POST - STATUS : 201 - respond with a new comment ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(201)
+      .send({
+        username: "butter_bridge", // change to username
+        body: "I'm making a comment ",
+        ///something here
+      })
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("I'm making a comment ");
+      });
+  });
+  test("POST - STATUS : 201 - respond with a new comment ignoring properties that are not username and body", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(201)
+      .send({
+        username: "butter_bridge",
+        body: "I'm making a comment ",
+        votes: 100,
+      })
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("I'm making a comment ");
+      });
+  });
+  test("POST - STATUS : 400 - responds with error message when invalid path given", () => {
+    return request(app)
+      .post("/api/articles/nosense/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("POST - STATUS : 404 - responds with error message when id not found", () => {
+    return request(app)
+      .post("/api/articles/1000000000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+  test("POST - STATUS : 400 - respond with an error when one of the two properties are missing ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(400)
+      .send({
+        username: "butter_bridge",
+      })
+      .then((response) => {
+        expect(response.body.msg).toBe("Missing value");
+      });
+  });
+  test("POST - STATUS : 400 - respond with an error when the username is not correct ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(400)
+      .send({
+        username: "Davide",
+        body: "I'm making a comment ",
+      })
+      .then((response) => {
+
+        expect(response.body.msg).toBe("username not valid");
+      });
   });
 });
