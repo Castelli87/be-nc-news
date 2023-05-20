@@ -19,8 +19,19 @@ afterAll(() => {
   db.end();
 });
 
+describe("/api", () => {
+  test("GET - STATUS: 200 - respond with a  endpoints list  available", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.result).toEqual(endpoints);
+      });
+  });
+});
+
 describe("/api/topics", () => {
-  test("GET - status: 200 - respond with all the properties", () => {
+  test("GET - STATUS: 200 - respond with all the properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -32,7 +43,7 @@ describe("/api/topics", () => {
         });
       });
   });
-  test("status:404, responds with an error message ", () => {
+  test("GET - STATUS: 404 - responds with an error message ", () => {
     return request(app)
       .get("/api/notAroute")
       .expect(404)
@@ -42,19 +53,9 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api", () => {
-  test("GET /api should return JSON with available endpoints", () => {
-    return request(app)
-      .get("/api")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.result).toEqual(endpoints);
-      });
-  });
-});
 
 describe("api/articles/:article_id", () => {
-  test("GET - status: 200 - respond with an article object", () => {
+  test("GET - STATUS: 200 - respond with an article object", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -72,10 +73,7 @@ describe("api/articles/:article_id", () => {
         );
       });
   });
-});
-
-describe("GET - /api/articles/invalidArticleId", () => {
-  test("400 - responds with error message when invalid path given", () => {
+  test("GET - STATUS: 400 - responds with error message when invalid path given", () => {
     return request(app)
       .get("/api/articles/nosense")
       .expect(400)
@@ -83,7 +81,7 @@ describe("GET - /api/articles/invalidArticleId", () => {
         expect(response.body.msg).toBe("bad request");
       });
   });
-  test("404 - responds with error message when id not found", () => {
+  test("GET - STATUS: 404 - responds with error message when id not found", () => {
     return request(app)
       .get("/api/articles/1000000000")
       .expect(404)
@@ -94,7 +92,7 @@ describe("GET - /api/articles/invalidArticleId", () => {
 });
 
 describe("api/articles/:article_id/comments", () => {
-  test("GET - status: 200 - respond with an article object sorted by the column created_at", () => {
+  test("GET - STATUS: 200 - respond with an article object sorted by the column created_at", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -105,7 +103,7 @@ describe("api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("GET - status: 200 - respond with an article object", () => {
+  test("GET - STATUS: 200 - respond with an article object", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -123,7 +121,7 @@ describe("api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("400 - responds with error message when invalid path given", () => {
+  test("GET - STATUS: 400 - responds with error message when invalid path given", () => {
     return request(app)
       .get("/api/articles/nosense/comments")
       .expect(400)
@@ -131,7 +129,7 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("bad request");
       });
   });
-  test("404 - responds with error message when id not found", () => {
+  test("GET - STATUS: 404 - responds with error message when id not found", () => {
     return request(app)
       .get("/api/articles/1000000000/comments")
       .expect(404)
@@ -139,8 +137,7 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("not found");
       });
   });
-  /// add this one
-  test("GET - status: 200 - responds with an empty array ", () => {
+  test("GET - STATUS: 200 - responds with an empty array ", () => {
     return request(app)
       .get("/api/articles/4/comments")
       .expect(200)
@@ -149,50 +146,51 @@ describe("api/articles/:article_id/comments", () => {
       });
   });
 
-  describe("/api/articles", () => {
-    test("GET - status: 200 - get all the articles but body", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles.length).toBe(5);
-          res.body.articles.forEach((article) => {
-            expect(typeof article).toBe("object");
-            expect(article).toHaveProperty("article_id");
-            expect(article).toHaveProperty("title");
-            expect(article).toHaveProperty("topic");
-            expect(article).toHaveProperty("author");
-            expect(article).not.toHaveProperty("body");
-            expect(article).toHaveProperty("created_at");
-            expect(article).toHaveProperty("votes");
-            expect(article).toHaveProperty("article_img_url");
-            expect(article).toHaveProperty("comment_count");
-          });
+});
+describe("/api/articles", () => {
+  test("GET - STATUS: 200 - get all the articles but without  body", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles.length).toBe(5);
+        res.body.articles.forEach((article) => {
+          expect(typeof article).toBe("object");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).not.toHaveProperty("body");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
         });
-    });
-    test.only("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles[0].comment_count).toBe(2);
-          expect(res.body.articles).toBeSorted("created_at", {
-            descending: true,
-          });
+      });
+  });
+  test("GET - STATUS: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].comment_count).toBe(2);
+        expect(res.body.articles).toBeSorted("created_at", {
+          descending: true,
         });
-    });
+      });
   });
 });
 
-describe.only("/api/articles/:article_id/comments", () => {
+/// ADD one test with a 404 code because was a bad request /api/nosense 
+
+describe("/api/articles/:article_id/comments", () => {
   test("POST - STATUS : 201 - respond with a new comment ", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .expect(201)
       .send({
-        username: "butter_bridge", // change to username
+        username: "butter_bridge", 
         body: "I'm making a comment ",
-        ///something here
       })
       .then((response) => {
         const { comment } = response.body;
