@@ -53,7 +53,6 @@ describe("/api/topics", () => {
   });
 });
 
-
 describe("api/articles/:article_id", () => {
   test("GET - STATUS: 200 - respond with an article object", () => {
     return request(app)
@@ -145,7 +144,6 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.commentsByArticleId).toEqual([]);
       });
   });
-
 });
 describe("/api/articles", () => {
   test("GET - STATUS: 200 - get all the articles but without  body", () => {
@@ -181,7 +179,7 @@ describe("/api/articles", () => {
   });
 });
 
-/// ADD one test with a 404 code because was a bad request /api/nosense 
+/// ADD one test with a 404 code because was a bad request /api/nosense
 
 describe("/api/articles/:article_id/comments", () => {
   test("POST - STATUS : 201 - respond with a new comment ", () => {
@@ -189,7 +187,7 @@ describe("/api/articles/:article_id/comments", () => {
       .post("/api/articles/1/comments")
       .expect(201)
       .send({
-        username: "butter_bridge", 
+        username: "butter_bridge",
         body: "I'm making a comment ",
       })
       .then((response) => {
@@ -249,8 +247,21 @@ describe("/api/articles/:article_id/comments", () => {
         body: "I'm making a comment ",
       })
       .then((response) => {
-
         expect(response.body.msg).toBe("username not valid");
+      });
+  });
+});
+
+describe.only("/api/articles/:article_id", () => {
+  test("PATCH - STATUS : 201 - respond with an update article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(200)
+      .send({ inc_votes:1 })
+      .then((response) => {
+      console.log(response)
+      const article = response.body.article
+      expect(article.votes).toBe(101);
       });
   });
 });

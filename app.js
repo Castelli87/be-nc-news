@@ -9,6 +9,7 @@ const { getTopics, getApi } = require("./controllers/topics.controller");
 const {
   getArticleById,
   getArticles,
+  selectVotesById
 } = require("./controllers/article.controller");
 
 const {
@@ -27,6 +28,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.get("/api/articles", getArticles);
 
 app.post("/api/articles/:article_id/comments", addComment);
+
+app.patch("/api/articles/:article_id",selectVotesById)
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });

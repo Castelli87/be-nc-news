@@ -1,5 +1,5 @@
 
-const {selectArticleById,selectArticles}=require('../models/article.model')
+const {selectArticleById,selectArticles,updataVotesById}=require('../models/article.model')
 
 
 
@@ -22,3 +22,13 @@ exports.getArticles = (req, res, next) => {
         next(err)
       })
   };
+
+exports.selectVotesById = (req,res,err)=>{
+
+const article_id=req.params.article_id
+const propertyToUpdate = req.body
+updataVotesById(article_id,propertyToUpdate).then((result)=>{
+  console.log(result,'<<<<<controller')
+  res.status(200).send({article:result})
+})
+}
