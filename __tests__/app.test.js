@@ -181,8 +181,8 @@ describe("/api/articles", () => {
 
 /// ADD one test with a 404 code because was a bad request /api/nosense
 
-describe("/api/articles/:article_id/comments", () => {
-  test("POST - STATUS : 201 - respond with a new comment ", () => {
+describe.only("/api/articles/:article_id/comments", () => {
+  test("POST - STATUS: 201 - respond with a new comment ", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .expect(201)
@@ -196,7 +196,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.body).toBe("I'm making a comment ");
       });
   });
-  test("POST - STATUS : 201 - respond with a new comment ignoring properties that are not username and body", () => {
+  test("POST - STATUS: 201 - respond with a new comment ignoring properties that are not username and body", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .expect(201)
@@ -211,7 +211,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.body).toBe("I'm making a comment ");
       });
   });
-  test("POST - STATUS : 400 - responds with error message when invalid path given", () => {
+  test("POST - STATUS: 400 - responds with error message when invalid path given", () => {
     return request(app)
       .post("/api/articles/nosense/comments")
       .expect(400)
@@ -219,7 +219,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("bad request");
       });
   });
-  test("POST - STATUS : 404 - responds with error message when id not found", () => {
+  test("POST - STATUS: 404 - responds with error message when id not found", () => {
     return request(app)
       .post("/api/articles/1000000000/comments")
       .expect(404)
@@ -227,7 +227,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("not found");
       });
   });
-  test("POST - STATUS : 400 - respond with an error when one of the two properties are missing ", () => {
+  test("POST - STATUS: 400 - respond with an error when one of the two properties are missing ", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .expect(400)
@@ -238,7 +238,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Missing value");
       });
   });
-  test("POST - STATUS : 400 - respond with an error when the username is not correct ", () => {
+  test("POST - STATUS: 400 - respond with an error when the username is not correct ", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .expect(400)
@@ -253,15 +253,49 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe.only("/api/articles/:article_id", () => {
-  test("PATCH - STATUS : 201 - respond with an update article", () => {
+  test("PATCH - STATUS: 200 - respond with an update article", () => {
     return request(app)
       .patch("/api/articles/1")
       .expect(200)
-      .send({ inc_votes:1 })
+      .send({ inc_votes: 1 })
       .then((response) => {
-      console.log(response)
-      const article = response.body.article
-      expect(article.votes).toBe(101);
+        const article = response.body.article;
+        expect(article.votes).toBe(101);
       });
   });
-});
+  test("PATCH - STATUS: 400 - respond with an error message when we are not sending the votes 'Missing value'", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(400)
+      .send({})
+      .then((response) => {
+        expect(response.body.msg).toBe("Missing value");
+      });
+  });
+  test("PATCH - STATUS: 404 - respond with error message when id 'not found' ", () => {
+    return request(app)
+      .patch("/api/articles/123456789")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+  test("PATCH - STATUS: 400 - respond with error message when given invalid path ", () => {
+    return request(app)
+      .patch("/api/articles/nosense")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("PATCH - STATUS: 400 - respond with error message when given invalid value ", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 'String instead than a number'})
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      })
+  })})

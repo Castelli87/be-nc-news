@@ -23,12 +23,15 @@ exports.getArticles = (req, res, next) => {
       })
   };
 
-exports.selectVotesById = (req,res,err)=>{
+exports.selectVotesById = (req,res,next)=>{
 
 const article_id=req.params.article_id
 const propertyToUpdate = req.body
+/*  console.log(Object.keys(propertyToUpdate).length) */
 updataVotesById(article_id,propertyToUpdate).then((result)=>{
-  console.log(result,'<<<<<controller')
   res.status(200).send({article:result})
+}).catch((err)=>{
+/*   console.log(err) */
+  next(err)
 })
 }
