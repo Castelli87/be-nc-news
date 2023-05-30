@@ -1,4 +1,5 @@
 const db =require('../db/connection')
+const { checkIfExists } = require('../db/seeds/utils')
 
 
 exports.selectArticleById = (article_id) => {
@@ -38,4 +39,25 @@ exports.selectArticles = ()=>{
      
         return result.rows
     })
+}
+
+exports.updataVotesById=(article_id,propertyToUpdate)=>{
+    const {inc_votes}=propertyToUpdate
+
+return checkIfExists(article_id).then(()=>{
+
+    return db.query(
+        `
+        UPDATE  articles
+        SET
+        votes = votes +$1
+        WHERE 
+        article_id = $2
+        RETURNING *;`,[inc_votes,article_id]
+        
+    ).then((result)=>{
+
+        return result.rows[0]
+    })
+})
 }

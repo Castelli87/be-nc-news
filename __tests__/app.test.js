@@ -19,8 +19,19 @@ afterAll(() => {
   db.end();
 });
 
+describe("/api", () => {
+  test("GET - STATUS: 200 - respond with a  endpoints list  available", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.result).toEqual(endpoints);
+      });
+  });
+});
+
 describe("/api/topics", () => {
-  test("GET - status: 200 - respond with all the properties", () => {
+  test("GET - STATUS: 200 - respond with all the properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -32,7 +43,7 @@ describe("/api/topics", () => {
         });
       });
   });
-  test("status:404, responds with an error message ", () => {
+  test("GET - STATUS: 404 - responds with an error message ", () => {
     return request(app)
       .get("/api/notAroute")
       .expect(404)
@@ -42,19 +53,8 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api", () => {
-  test("GET /api should return JSON with available endpoints", () => {
-    return request(app)
-      .get("/api")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.result).toEqual(endpoints);
-      });
-  });
-});
-
 describe("api/articles/:article_id", () => {
-  test("GET - status: 200 - respond with an article object", () => {
+  test("GET - STATUS: 200 - respond with an article object", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -72,10 +72,7 @@ describe("api/articles/:article_id", () => {
         );
       });
   });
-});
-
-describe("GET - /api/articles/invalidArticleId", () => {
-  test("400 - responds with error message when invalid path given", () => {
+  test("GET - STATUS: 400 - responds with error message when invalid path given", () => {
     return request(app)
       .get("/api/articles/nosense")
       .expect(400)
@@ -83,7 +80,7 @@ describe("GET - /api/articles/invalidArticleId", () => {
         expect(response.body.msg).toBe("bad request");
       });
   });
-  test("404 - responds with error message when id not found", () => {
+  test("GET - STATUS: 404 - responds with error message when id not found", () => {
     return request(app)
       .get("/api/articles/1000000000")
       .expect(404)
@@ -94,7 +91,7 @@ describe("GET - /api/articles/invalidArticleId", () => {
 });
 
 describe("api/articles/:article_id/comments", () => {
-  test("GET - status: 200 - respond with an article object sorted by the column created_at", () => {
+  test("GET - STATUS: 200 - respond with an article object sorted by the column created_at", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -105,7 +102,7 @@ describe("api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("GET - status: 200 - respond with an article object", () => {
+  test("GET - STATUS: 200 - respond with an article object", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -123,7 +120,7 @@ describe("api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("400 - responds with error message when invalid path given", () => {
+  test("GET - STATUS: 400 - responds with error message when invalid path given", () => {
     return request(app)
       .get("/api/articles/nosense/comments")
       .expect(400)
@@ -131,7 +128,7 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("bad request");
       });
   });
-  test("404 - responds with error message when id not found", () => {
+  test("GET - STATUS: 404 - responds with error message when id not found", () => {
     return request(app)
       .get("/api/articles/1000000000/comments")
       .expect(404)
@@ -139,48 +136,166 @@ describe("api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("not found");
       });
   });
-  /// add this one
-  test("GET - status: 200 - responds with an empty array ", () => {
+  test("GET - STATUS: 200 - responds with an empty array ", () => {
     return request(app)
       .get("/api/articles/4/comments")
       .expect(200)
       .then((response) => {
-        console.log("test", response.body);
         expect(response.body.commentsByArticleId).toEqual([]);
       });
   });
-
-  describe.only("/api/articles", () => {
-    test("GET - status: 200 - get all the articles but body", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles.length).toBe(5);
-          res.body.articles.forEach((article) => {
-            expect(typeof article).toBe("object");
-            expect(article).toHaveProperty("article_id");
-            expect(article).toHaveProperty("title");
-            expect(article).toHaveProperty("topic");
-            expect(article).toHaveProperty("author");
-            expect(article).not.toHaveProperty("body");
-            expect(article).toHaveProperty("created_at");
-            expect(article).toHaveProperty("votes");
-            expect(article).toHaveProperty("article_img_url");
-            expect(article).toHaveProperty("comment_count");
-          });
+});
+describe("/api/articles", () => {
+  test("GET - STATUS: 200 - get all the articles but without  body", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles.length).toBe(5);
+        res.body.articles.forEach((article) => {
+          expect(typeof article).toBe("object");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).not.toHaveProperty("body");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
         });
-    });
-    test("GET - status: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles[0].comment_count).toBe(2);
-          expect(res.body.articles).toBeSorted("created_at", {
-            descending: true,
-          });
+      });
+  });
+  test("GET - STATUS: 200 - get all the articles but not the body, all sorted by the column created_at in a descending order and group by article_id ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles[0].comment_count).toBe(2);
+        expect(res.body.articles).toBeSorted("created_at", {
+          descending: true,
         });
-    });
+      });
   });
 });
+
+/// ADD one test with a 404 code because was a bad request /api/nosense
+
+describe.only("/api/articles/:article_id/comments", () => {
+  test("POST - STATUS: 201 - respond with a new comment ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(201)
+      .send({
+        username: "butter_bridge",
+        body: "I'm making a comment ",
+      })
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("I'm making a comment ");
+      });
+  });
+  test("POST - STATUS: 201 - respond with a new comment ignoring properties that are not username and body", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(201)
+      .send({
+        username: "butter_bridge",
+        body: "I'm making a comment ",
+        votes: 100,
+      })
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("I'm making a comment ");
+      });
+  });
+  test("POST - STATUS: 400 - responds with error message when invalid path given", () => {
+    return request(app)
+      .post("/api/articles/nosense/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("POST - STATUS: 404 - responds with error message when id not found", () => {
+    return request(app)
+      .post("/api/articles/1000000000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+  test("POST - STATUS: 400 - respond with an error when one of the two properties are missing ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(400)
+      .send({
+        username: "butter_bridge",
+      })
+      .then((response) => {
+        expect(response.body.msg).toBe("Missing value");
+      });
+  });
+  test("POST - STATUS: 400 - respond with an error when the username is not correct ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(400)
+      .send({
+        username: "Davide",
+        body: "I'm making a comment ",
+      })
+      .then((response) => {
+        expect(response.body.msg).toBe("username not valid");
+      });
+  });
+});
+
+describe.only("/api/articles/:article_id", () => {
+  test("PATCH - STATUS: 200 - respond with an update article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(200)
+      .send({ inc_votes: 1 })
+      .then((response) => {
+        const article = response.body.article;
+        expect(article.votes).toBe(101);
+      });
+  });
+  test("PATCH - STATUS: 400 - respond with an error message when we are not sending the votes 'Missing value'", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(400)
+      .send({})
+      .then((response) => {
+        expect(response.body.msg).toBe("Missing value");
+      });
+  });
+  test("PATCH - STATUS: 404 - respond with error message when id 'not found' ", () => {
+    return request(app)
+      .patch("/api/articles/123456789")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+  test("PATCH - STATUS: 400 - respond with error message when given invalid path ", () => {
+    return request(app)
+      .patch("/api/articles/nosense")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+  test("PATCH - STATUS: 400 - respond with error message when given invalid value ", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 'String instead than a number'})
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      })
+  })})
