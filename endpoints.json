@@ -6,24 +6,40 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "exampleResponse": {
+      "articles": [
         {
-          "slug": "football",
-          "description": "Footie!"
+          "author": "grumpy19",
+          "title": "The Notorious MSG’s Unlikely Formula For Success",
+          "article_id": 34,
+          "topic": "cooking",
+          "created_at": "2020-11-22T11:13:00.000Z",
+          "votes": 1001,
+          "article_img_url": "https://images.pexels.com/photos/2403392/pexels-photo-2403392.jpeg?w=700&h=700",
+          "comment_count": 14
+        },
+        {
+          "author": "tickle122",
+          "title": "The battle for Node.js security has only begun",
+          "article_id": 12,
+          "topic": "coding",
+          "created_at": "2020-11-15T13:25:00.000Z",
+          "votes": 4000,
+          "article_img_url": "https://images.pexels.com/photos/10845119/pexels-photo-10845119.jpeg?w=700&h=700",
+          "comment_count": 10
         }
       ]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": [
-      "author",
-      "topic",
-      "sort_by",
-      "order"
-    ],
+  "GET /api/articles/:article_id": {
+    "description": "serves an object with the requested article",
     "exampleResponse": {
-      "articles": [
+      "article": [
         {
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
@@ -36,19 +52,58 @@
       ]
     }
   },
-  "GET /api/articles/:article_id": {
-    "description": "serves an object of an article that is defined by a parametric endpoint",
-    "queries": [],
+   "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments associated with a requested article",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 162,
+          "body": "Et suscipit maxime sit sunt consequuntur consequatur fugiat molestias. Et quis enim vero.",
+          "article_id": 2,
+          "author": "grumpy19",
+          "votes": 14,
+          "created_at": "2020-10-03T19:22:00.000Z"
+        },
+        {
+          "comment_id": 102,
+          "body": "Quia quos adipisci sint expedita voluptatem id ut at accusantium. Et ex itaque recusandae aut quo. Quia quam similique eum quidem iusto. Aspernatur ducimus vitae vel natus doloribus qui id. Excepturi voluptatem qui quia sit qui eveniet voluptatem. Fugit itaque libero quibusdam sunt.",
+          "article_id": 2,
+          "author": "jessjelly",
+          "votes": 10,
+          "created_at": "2020-09-14T12:13:00.000Z"
+        }
+      ]
+    }
+  },
+   "POST /api/articles/:article_id/comments": {
+    "description": "Adds a comment to the saved list associated with a particular article",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 144,
+          "body": "Placeat voluptatum consequatur ducimus et eum molestiae impedit eveniet. Recusandae rerum voluptas quia mollitia quam velit iusto. Eum eos similique minima necessitatibus nemo. Iure deleniti omnis enim animi iste delectus et consequuntur.",
+          "article_id": 5,
+          "author": "grumpy19",
+          "votes": 19,
+          "created_at": "2020-11-23T17:00:00.000Z"
+        }
+      ]
+    }
+  },
+   "PATCH /api/articles/:article_id": {
+    "description": "Changes the number of votes associated with an article by an integer value",
     "exampleResponse": {
       "article": {
-        "author": "butter_bridge",
-        "title": "Living in the shadow of a great man",
-        "article_id": 1,
-        "body": "I find this existence challenging",
-        "topic": "mitch",
-        "created_at": "2018-05-30T15:59:13.341Z",
-        "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "article_id": 11,
+        "title": "Designing Better JavaScript APIs",
+        "topic": "coding",
+        "author": "tickle122",
+        "body": "At some point or another, you will find yourself writing JavaScript code that exceeds the couple of lines from a jQuery plugin. Your code will do a whole lot of things; it will (ideally) be used by many people who will approach your code differently. They have different needs, knowledge and expectations.",
+        "created_at": "2020-07-07T00:13:00.000Z",
+        "votes": 1,
+        "article_img_url": "https://images.pexels.com/photos/5483071/pexels-photo-5483071.jpeg?w=700&h=700"
       }
     }
-  }}
+  }
+}
